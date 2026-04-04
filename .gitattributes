@@ -1,0 +1,10 @@
+# Handle line endings automatically for text files
+* text=auto
+
+# Explicitly declare C/H and scripts to use LF
+*.c text eol=lf
+*.h text eol=lf
+*.sh text eol=lf
+*.ld text eol=lf
+*.s text eol=lf
+*.txt text eol=lf
