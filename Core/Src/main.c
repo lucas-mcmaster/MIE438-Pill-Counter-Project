@@ -25,6 +25,11 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+//including all the function files
+#include "SystemConfig.h"
+#include "MotorDriver.h"
+#include "BeamSensorHandler.h"
+#include "UserInterface.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
