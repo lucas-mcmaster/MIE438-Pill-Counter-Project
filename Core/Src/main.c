@@ -218,7 +218,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	}
 
 	//handling encoder button press
-	else if (GPIO_Pin == Encoder_Button_Pin)
+	else if (GPIO_Pin == Encoder_Button_Interrupt_Pin)
 	{
 		UI_HandleButtonPress();
 	}
@@ -236,7 +236,7 @@ void Error_Handler(void)
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
 
-  HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_SET); //turning red led on here to show hardware error
+  BSP_LED_On(LED_RED); //turning red led on here to show hardware error
   while (1)
   {
   }

@@ -5,6 +5,7 @@
  */
 
 #include "UserInterface.h"
+#include "main.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -191,8 +192,8 @@ void UI_Update(void) {
     //snapshot temporary variables to fix race condition - from testing when LCD would not update properly
     //grab these exactly once per loop so they cannot change below
     SystemState_t snap_state = SystemStatus.currentState;
-    uint32_t snap_target = SystemStatus.targetPillCount;
-    uint32_t snap_current = SystemStatus.currentPillCount;
+    unsigned int snap_target = SystemStatus.targetPillCount;
+    unsigned int snap_current = SystemStatus.currentPillCount;
 
     //refreshing LCD screen on change only
     //using the snapshots for all comparisons to ensure correct updates
@@ -210,7 +211,7 @@ void UI_Update(void) {
                 lcd_send_string("Ready to Count  "); //idle state first libe- adding spaces to clear previous text on LCD. DO NOT EXCEED 16 char
 
                 lcd_set_cursor(1, 0);
-                sprintf(buffer, "Target: %lu", snap_target); //target count - updates with encoder
+                sprintf(buffer, "Target: %u", snap_target); //target count - updates with encoder
                 break;
 
             case STATE_RUNNING:
@@ -218,7 +219,7 @@ void UI_Update(void) {
                 lcd_send_string("Counting...     "); //during counting process
 
                 lcd_set_cursor(1, 0);
-                sprintf(buffer, "%lu / %lu", snap_current, snap_target); //shows current count/target
+                sprintf(buffer, "%u / %u", snap_current, snap_target); //shows current count/target
                 break;
 
             case STATE_COMPLETE:
@@ -226,7 +227,7 @@ void UI_Update(void) {
                 lcd_send_string("DONE!           "); //once done show pill count
 
                 lcd_set_cursor(1, 0);
-                sprintf(buffer, "Pills: %lu", snap_current);
+                sprintf(buffer, "Pills: %u", snap_current);
                 break;
 
             case STATE_ERROR: //error state - attempts to print out to LCD and flashed red led for info
@@ -237,7 +238,7 @@ void UI_Update(void) {
 				lcd_send_string("Check Machine   ");
 
 				//Turning on the red LED to grab attention
-				HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_SET);
+				BSP_LED_On(LED_YELLOW);
 
 				break;
 

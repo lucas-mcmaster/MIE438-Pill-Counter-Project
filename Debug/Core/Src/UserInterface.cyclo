@@ -1,0 +1,9 @@
+../Core/Src/UserInterface.c:28:13:lcd_send_nibble	2
+../Core/Src/UserInterface.c:41:13:lcd_send_cmd	2
+../Core/Src/UserInterface.c:62:13:lcd_send_data	2
+../Core/Src/UserInterface.c:82:13:lcd_clear	1
+../Core/Src/UserInterface.c:88:13:lcd_set_cursor	3
+../Core/Src/UserInterface.c:97:13:lcd_send_string	2
+../Core/Src/UserInterface.c:109:6:UI_Init	1
+../Core/Src/UserInterface.c:142:6:UI_HandleButtonPress	4
+../Core/Src/UserInterface.c:161:6:UI_Update	17

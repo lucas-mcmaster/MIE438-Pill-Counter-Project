@@ -1,0 +1,4 @@
+../Core/Src/MotorDriver.c:25:13:Set_Motor_Pins	1
+../Core/Src/MotorDriver.c:34:6:Motor_Stop	1
+../Core/Src/MotorDriver.c:44:6:Motor_Init	1
+../Core/Src/MotorDriver.c:51:6:Motor_Update	4

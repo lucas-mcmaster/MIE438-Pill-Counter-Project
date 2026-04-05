@@ -51,7 +51,7 @@ void Motor_Init(void)
 void Motor_Update(void)
 {
 	//safety check to only spin motor when the system state is set to running
-	if(SystemStatus.currentState != STATE_RUNNNING) //CHANGE THIS ONCE SYSTEM STATE IS WRITTEN
+	if(SystemStatus.currentState != STATE_RUNNING) //CHANGE THIS ONCE SYSTEM STATE IS WRITTEN
 	{
 		Motor_Stop(); //stops motor if not in correct state
 		return;
