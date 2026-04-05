@@ -8,7 +8,7 @@
 #include "SystemConfig.h"
 
 //intitializing the global var
-SystemConfig_t SystemStatus;
+volatile SystemConfig_t SystemStatus;
 
 //system initialization function on power up
 

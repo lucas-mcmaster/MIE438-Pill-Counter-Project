@@ -26,8 +26,8 @@ typedef struct {
     unsigned int lastPillTime;     //timestamp of the last detected pill
 } SystemConfig_t;
 
-//initializing the struct with extern so that its global
-extern SystemConfig_t SystemStatus;
+//initializing the struct with extern so that its global and volatile to prevent  compiler issues
+extern volatile SystemConfig_t SystemStatus;
 
 //public functions
 void System_Init(void);
