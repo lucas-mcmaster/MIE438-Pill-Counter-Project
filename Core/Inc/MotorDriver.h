@@ -1,8 +1,6 @@
 /*
  * MotorDriver.h
  *
- *  Created on: Apr 3, 2026
- *      Author:
  */
 
 #ifndef INC_MOTORDRIVER_H_

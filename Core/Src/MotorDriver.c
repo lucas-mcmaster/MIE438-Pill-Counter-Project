@@ -1,8 +1,6 @@
 /*
  * MotorDriver.c
  *
- *  Created on: Apr 3, 2026
- *      Author:
  */
 
 //including main for pin macros
@@ -53,7 +51,7 @@ void Motor_Init(void)
 void Motor_Update(void)
 {
 	//safety check to only spin motor when the system state is set to running
-	if(system.CurrentState != RUNNNING) //CHANGE THIS ONCE SYSTEM STATE IS WRITTEN
+	if(systemState.currentState != RUNNNING) //CHANGE THIS ONCE SYSTEM STATE IS WRITTEN
 	{
 		Motor_Stop(); //stops motor if not in correct state
 		return;
