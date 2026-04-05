@@ -99,6 +99,10 @@ int main(void)
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
 
+  //Initializing all required components
+  System_Init();
+  Motor_Init();
+  UI_Init();
   /* USER CODE END 2 */
 
   /* Initialize leds */
@@ -128,6 +132,17 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	//control loop code - interrupt functions called at bottom
+
+	  //checking/updating the state at the start of each loop
+	  System_ProcessState();
+
+	  //updating the LCD/reading encoder if needed
+	  UI_Update();
+
+	  //stepping motor if correct step time and state
+	  Motor_Update();
+
   }
   /* USER CODE END 3 */
 }
@@ -193,6 +208,22 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
+//External Interrupt callback function
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	//IR sensor interrupt handle
+	if(GPIO_Pin == Adafruit_IR_Sensor_Pin)
+	{
+		Sensor_HandlePillDrop();
+	}
+
+	//handling encoder button press
+	else if (GPIO_Pin == Encoder_Button_Pin)
+	{
+		UI_HandleButtonPress();
+	}
+}
+
 /* USER CODE END 4 */
 
 /**
@@ -204,6 +235,8 @@ void Error_Handler(void)
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
+
+  HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_SET); //turning red led on here to show hardware error
   while (1)
   {
   }

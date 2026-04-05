@@ -29,7 +29,11 @@ static void lcd_send_nibble(char nibble) { //nibble is byte needed to reset boar
     //sending data_t here in two packets with enable switching from 1 to 0 to switch to 4 bit mode
     data_t[0] = nibble | 0x0C;  //EN=1, RS=0, Backlight=1 RS=command mode
     data_t[1] = nibble | 0x08;  //EN=0, RS=0, Backlight=1
-    HAL_I2C_Master_Transmit(&hi2c1, LCD_ADDR, data_t, 2, 100);
+
+    if (HAL_I2C_Master_Transmit(&hi2c1, LCD_ADDR, data_t, 2, 100)!=HAL_OK) //calling function in If statement for error handling in case of I2C issues
+    {
+    	SystemStatus.currentState=STATE_ERROR;
+    }
 }
 
 //send commands in 4 bit mode.
@@ -46,7 +50,11 @@ static void lcd_send_cmd(char cmd) {
     data_t[1] = data_u | 0x08; //EN=0 RS=0 Backlight=1
     data_t[2] = data_l | 0x0C; //EN=1, RS=0, Backlight=1 RS=command mode
     data_t[3] = data_l | 0x08; //EN=0 RS=0 Backlight=1
-    HAL_I2C_Master_Transmit(&hi2c1, LCD_ADDR, data_t, 4, 100);
+
+    if (HAL_I2C_Master_Transmit(&hi2c1, LCD_ADDR, data_t, 4, 100)!=HAL_OK) //calling function in If statement for error handling in case of I2C issues
+    {
+    	SystemStatus.currentState=STATE_ERROR;
+    }
 }
 
 //sending data in 4 bit packets
@@ -62,7 +70,11 @@ static void lcd_send_data(char data) {
     data_t[1] = data_u | 0x09; //EN=0, RS=1, Backlight=1 RS=text data mode
     data_t[2] = data_l | 0x0D; //EN=1, RS=1, Backlight=1 RS=text data mode
     data_t[3] = data_l | 0x09;  //EN=0, RS=1, Backlight=1 RS=text data mode
-    HAL_I2C_Master_Transmit(&hi2c1, LCD_ADDR, data_t, 4, 100);
+
+    if (HAL_I2C_Master_Transmit(&hi2c1, LCD_ADDR, data_t, 4, 100)!=HAL_OK) //calling function in If statement for error handling in case of I2C issues
+        {
+        	SystemStatus.currentState=STATE_ERROR;
+        }
 }
 
 //to clear LCD on initalization/reset
@@ -216,6 +228,18 @@ void UI_Update(void) {
                 lcd_set_cursor(1, 0);
                 sprintf(buffer, "Pills: %lu", snap_current);
                 break;
+
+            case STATE_ERROR: //error state - attempts to print out to LCD and flashed red led for info
+            	lcd_set_cursor(0, 0);
+				lcd_send_string("ERROR!          ");
+
+				lcd_set_cursor(1, 0);
+				lcd_send_string("Check Machine   ");
+
+				//Turning on the red LED to grab attention
+				HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_SET);
+
+				break;
 
             default:
                 buffer[0] = '\0'; // Empty string for safety

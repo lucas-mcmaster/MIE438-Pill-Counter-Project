@@ -48,7 +48,7 @@ void System_ProcessState(void) {
             break;
 
         case STATE_ERROR:
-            // Placeholder for future safety features (e.g., motor drawing too much current).
+            //Placeholder for future safety feature.
             break;
     }
 }
