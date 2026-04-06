@@ -98,7 +98,15 @@ int main(void)
   MX_I2C1_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
-
+  /* USER CODE BEGIN 2 */
+    uint8_t discovered_address = 0x00;
+    for(uint8_t i = 38; i < 128; i++) {
+        // Check if a device acknowledges at this address
+        if(HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(i<<1), 3, 5) == HAL_OK) {
+            discovered_address = i;
+            break; // Put a debugger breakpoint on this line!
+        }
+    }
   //Initializing all required components
   System_Init();
   Motor_Init();

@@ -20,7 +20,7 @@ void System_Init(void) {
     SystemStatus.targetPillCount = 1; //starting target at 1 and current pill count at 0
     SystemStatus.currentPillCount = 0;
 
-    SystemStatus.filterDelayMs = 20;   //blind-time after a pill is detected to prevent double counting - CURRENTLY 20ms LOOK TO CHANGE AFTER TESTING
+    SystemStatus.filterDelayMs = 75;   //blind-time after a pill is detected to prevent double counting - CURRENTLY 20ms LOOK TO CHANGE AFTER TESTING
     SystemStatus.lastPillTime = 0;     //time between pills for possible defect checking and error checking
 }
 

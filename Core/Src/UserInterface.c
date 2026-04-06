@@ -142,7 +142,7 @@ void UI_Init(void) {
 void UI_HandleButtonPress(void) {
     //Added a software debounce to ignore random phantom button triggers when testing
     unsigned int current_time = HAL_GetTick();
-    if ((current_time - last_button_press_time) < 50) { //50 millisecond button debounce - can adjust if needed
+    if ((current_time - last_button_press_time) < 350) { //350 millisecond button debounce - can adjust if needed
         return;
     }
     last_button_press_time = current_time;
