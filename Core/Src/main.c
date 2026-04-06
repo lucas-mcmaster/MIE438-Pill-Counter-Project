@@ -97,6 +97,14 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
   MX_TIM3_Init();
+
+  /* Initialize leds FIRST — must be done before System_Init/UI_Init so that
+   * any early I2C fault in UI_Init that triggers System_SetState(STATE_ERROR)
+   * can drive the LED entry actions correctly on the first FSM loop. */
+  BSP_LED_Init(LED_GREEN);
+  BSP_LED_Init(LED_YELLOW);
+  BSP_LED_Init(LED_RED);
+
   /* USER CODE BEGIN 2 */
 
   //Initializing all required components
@@ -105,13 +113,13 @@ int main(void)
   UI_Init();
   /* USER CODE END 2 */
 
-  /* Initialize leds */
-  BSP_LED_Init(LED_GREEN);
-  BSP_LED_Init(LED_YELLOW);
-  BSP_LED_Init(LED_RED);
-
-  /* Initialize USER push-button, will be used to trigger an interrupt each time it's pressed.*/
+  /* Initialize USER push-button in EXTI mode.
+   * WARNING: BSP_PB_Init internally resets EXTI15_10_IRQn priority to its
+   * BSP default (15 = lowest), which would override the priority=1 that
+   * MX_GPIO_Init set for the IR sensor on the same interrupt line (EXTI14).
+   * We restore the correct priority immediately after. */
   BSP_PB_Init(BUTTON_USER, BUTTON_MODE_EXTI);
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0); // Restore IR sensor priority
 
   /* Initialize COM1 port (115200, 8 bits (7-bit data + 1 stop bit), no parity */
   BspCOMInit.BaudRate   = 115200;

@@ -202,10 +202,23 @@ void UI_HandleButtonPress(void)
  *
  * 1. Reads rotary encoder in IDLE state and updates targetPillCount.
  * 2. Refreshes the LCD only when displayed values have changed.
+ * 3. Rate-limits LCD writes to 100ms to prevent I2C traffic blocking
+ *    the main loop during fast pill counting.
  * ========================================================================= */
 void UI_Update(void)
 {
     char buffer[17]; // 16 chars + null terminator
+
+    /* ------------------------------------------------------------------
+     * GUARD: If the LCD itself caused the I2C fault, stop retrying it.
+     * Without this, every UI_Update call attempts I2C, fails, calls
+     * System_SetState(STATE_ERROR) again, and any state transition the
+     * button makes gets immediately overwritten back to STATE_ERROR.
+     * The user must press the button to acknowledge and return to IDLE —
+     * at which point we reset errorCode and retry will happen on next run.
+     * ------------------------------------------------------------------ */
+    if (SystemStatus.errorCode == ERROR_I2C_FAULT)
+        return;
 
     /* ------------------------------------------------------------------
      * ENCODER READING — only active in STATE_IDLE
@@ -222,6 +235,9 @@ void UI_Update(void)
             if (clicks > 0)
             {
                 SystemStatus.targetPillCount += (unsigned int)clicks;
+                // Cap at a sensible maximum to prevent unsigned overflow
+                if (SystemStatus.targetPillCount > 9999)
+                    SystemStatus.targetPillCount = 9999;
             }
             else if (clicks < 0)
             {
@@ -244,6 +260,22 @@ void UI_Update(void)
     SystemError_t snap_error   = SystemStatus.errorCode;
 
     /* ------------------------------------------------------------------
+     * LCD RATE LIMITING — only update at most every 100ms.
+     * The pill count interrupt fires instantly regardless of this limit.
+     * This decouples fast sensor events from slow I2C LCD updates.
+     * State/error changes bypass the rate limit so DONE!/ERROR
+     * messages appear immediately.
+     * ------------------------------------------------------------------ */
+    static unsigned int last_lcd_update = 0;
+    unsigned int now = HAL_GetTick();
+
+    uint8_t force_update = (snap_state != last_displayed_state ||
+                            snap_error != last_displayed_error);
+
+    if (!force_update && (now - last_lcd_update) < 100)
+        return;
+
+    /* ------------------------------------------------------------------
      * LCD REFRESH — only when something has actually changed
      * ------------------------------------------------------------------ */
     if (snap_state   == last_displayed_state   &&
@@ -251,8 +283,10 @@ void UI_Update(void)
         snap_current == last_displayed_current &&
         snap_error   == last_displayed_error)
     {
-        return; // Nothing changed — skip I2C traffic
+        return;
     }
+
+    last_lcd_update = now;
 
     switch (snap_state)
     {
@@ -265,13 +299,13 @@ void UI_Update(void)
             {
                 lcd_send_string("Inventory Check ");
                 lcd_set_cursor(1, 0);
-                sprintf(buffer, "Target: NONE    ");
+                snprintf(buffer, sizeof(buffer), "Target: NONE    ");
             }
             else
             {
                 lcd_send_string("Ready to Count  ");
                 lcd_set_cursor(1, 0);
-                sprintf(buffer, "Target: %u", snap_target);
+                snprintf(buffer, sizeof(buffer), "Target: %u", snap_target);
             }
             lcd_send_padded(buffer);
             break;
@@ -284,26 +318,27 @@ void UI_Update(void)
             lcd_send_string("Counting...     ");
             lcd_set_cursor(1, 0);
             if (snap_target == 0)
-                sprintf(buffer, "Total: %u", snap_current);
+                snprintf(buffer, sizeof(buffer), "Total: %u", snap_current);
             else
-                sprintf(buffer, "%u / %u", snap_current, snap_target);
+                snprintf(buffer, sizeof(buffer), "%u / %u", snap_current, snap_target);
             lcd_send_padded(buffer);
             break;
 
         /* ----------------------------------------------------------------
-         * COMPLETE — show final count and prompt
+         * COMPLETE — show final count
          * ---------------------------------------------------------------- */
         case STATE_COMPLETE:
             lcd_set_cursor(0, 0);
             lcd_send_string("DONE!           ");
             lcd_set_cursor(1, 0);
-            sprintf(buffer, "Pills: %u", snap_current);
+            snprintf(buffer, sizeof(buffer), "Pills: %u", snap_current);
             lcd_send_padded(buffer);
             break;
 
         /* ----------------------------------------------------------------
-         * ERROR — line 1 shows generic fault header,
-         *         line 2 shows specific error description based on errorCode
+         * ERROR — line 1: fault header, line 2: specific error code.
+         * LED is managed exclusively by SystemConfig.c entry actions —
+         * no BSP_LED calls here to avoid conflicting with the FSM LED state.
          * ---------------------------------------------------------------- */
         case STATE_ERROR:
             lcd_set_cursor(0, 0);
@@ -313,26 +348,26 @@ void UI_Update(void)
             switch (snap_error)
             {
                 case ERROR_JAM:
-                    sprintf(buffer, "Pill jam detect ");
+                    snprintf(buffer, sizeof(buffer), "Pill jam detect ");
                     break;
                 case ERROR_NO_START:
-                    sprintf(buffer, "No pills at all ");
+                    snprintf(buffer, sizeof(buffer), "No pills at all ");
                     break;
                 case ERROR_I2C_FAULT:
-                    sprintf(buffer, "I2C bus fault   ");
+                    snprintf(buffer, sizeof(buffer), "I2C bus fault   ");
                     break;
                 case ERROR_SENSOR_FAULT:
-                    sprintf(buffer, "Sensor error    ");
+                    snprintf(buffer, sizeof(buffer), "Sensor error    ");
                     break;
                 case ERROR_NONE:
                 default:
-                    sprintf(buffer, "Unknown error   ");
+                    snprintf(buffer, sizeof(buffer), "Unknown error   ");
                     break;
             }
             lcd_send_padded(buffer);
 
-            /* Yellow LED used as fault indicator (red reserved for Error_Handler) */
-            BSP_LED_On(LED_YELLOW);
+            /* NOTE: LED_YELLOW was removed here — LED state is managed
+             * exclusively in SystemConfig.c to avoid conflicts. */
             break;
 
         default:
