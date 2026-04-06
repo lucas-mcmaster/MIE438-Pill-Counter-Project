@@ -5,5 +5,5 @@
 ../Core/Src/UserInterface.c:88:13:lcd_set_cursor	3
 ../Core/Src/UserInterface.c:97:13:lcd_send_string	2
 ../Core/Src/UserInterface.c:109:6:UI_Init	1
-../Core/Src/UserInterface.c:142:6:UI_HandleButtonPress	4
-../Core/Src/UserInterface.c:161:6:UI_Update	17
+../Core/Src/UserInterface.c:142:6:UI_HandleButtonPress	6
+../Core/Src/UserInterface.c:178:6:UI_Update	19

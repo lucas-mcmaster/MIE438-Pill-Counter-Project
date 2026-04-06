@@ -1,2 +1,2 @@
-../Core/Src/SystemConfig.c:15:6:System_Init	1
-../Core/Src/SystemConfig.c:26:6:System_ProcessState	4
+../Core/Src/SystemConfig.c:16:6:System_Init	1
+../Core/Src/SystemConfig.c:27:6:System_ProcessState	6

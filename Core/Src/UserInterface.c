@@ -149,10 +149,27 @@ void UI_HandleButtonPress(void) {
 
     if (SystemStatus.currentState == STATE_IDLE) { //if in idle set currentPillCount to 0 and switch to running state
         SystemStatus.currentPillCount = 0;
+
+        //added this for inventory mode timeout - setting lastpilltime to Hal_GetTick so it doesn't instantly timeout with lastpill at 0
+        SystemStatus.lastPillTime = HAL_GetTick();
         SystemStatus.currentState = STATE_RUNNING;
     }
+    else if (SystemStatus.currentState == STATE_RUNNING)
+    {
+        //added this to allow user to manually stop
+        //required for inventory mode but also serves as an emergency stop for regular counting mode.
+        SystemStatus.currentState = STATE_COMPLETE;
+    }
+
     else if (SystemStatus.currentState == STATE_COMPLETE) { //when done switch back to idle state to use again
         SystemStatus.currentPillCount = 0;
+        SystemStatus.currentState = STATE_IDLE;
+    }
+
+    else if (SystemStatus.currentState == STATE_ERROR)
+    {
+        //added this to allow user to clear an error state without rebooting the STM32 - should never get into this state but just in case
+        BSP_LED_Off(LED_YELLOW); //clear the error LED
         SystemStatus.currentState = STATE_IDLE;
     }
 }
@@ -182,7 +199,7 @@ void UI_Update(void) {
                 if (SystemStatus.targetPillCount > decrement) { //allow the decrement if will not go below 0
                     SystemStatus.targetPillCount -= decrement;
                 } else {
-                    SystemStatus.targetPillCount = 1; //Flooring  it at 1 if user goes too far down
+                    SystemStatus.targetPillCount = 0; //Flooring  it at 0 if user goes too far down
                 }
             }
             last_encoder_count += (clicks * 4); //setting last encoder count based on clicks and not current_count to prevent drift from slight overshoot when spinning
@@ -208,10 +225,21 @@ void UI_Update(void) {
 
             case STATE_IDLE:
                 lcd_set_cursor(0, 0);
-                lcd_send_string("Ready to Count  "); //idle state first libe- adding spaces to clear previous text on LCD. DO NOT EXCEED 16 char
 
-                lcd_set_cursor(1, 0);
-                sprintf(buffer, "Target: %u", snap_target); //target count - updates with encoder
+                //if statement to differentiate between invenotry and target count mode
+                if (snap_target == 0)
+                {
+                	lcd_send_string("Inventory Check ");  //inventory mode idle state  - adding spaces to clear previous text on LCD. DO NOT EXCEED 16 char
+					lcd_set_cursor(1, 0);
+					sprintf(buffer, "Target: NONE    "); //when target count is 0 setting this to done to reduce confusion
+                }
+                else
+                {
+					lcd_send_string("Ready to Count  "); //target count mode idle state - adding spaces to clear previous text on LCD. DO NOT EXCEED 16 char
+
+					lcd_set_cursor(1, 0);
+					sprintf(buffer, "Target: %u", snap_target); //target count - updates with encoder
+                }
                 break;
 
             case STATE_RUNNING:
@@ -219,7 +247,17 @@ void UI_Update(void) {
                 lcd_send_string("Counting...     "); //during counting process
 
                 lcd_set_cursor(1, 0);
-                sprintf(buffer, "%u / %u", snap_current, snap_target); //shows current count/target
+
+                //if else statement to hide fraction if in inventory mode
+                if (snap_target==0)
+                {
+					sprintf(buffer, "Total: %u", snap_current);
+				}
+                else
+                {
+                	sprintf(buffer, "%u / %u", snap_current, snap_target); //shows current count/target
+                }
+
                 break;
 
             case STATE_COMPLETE:

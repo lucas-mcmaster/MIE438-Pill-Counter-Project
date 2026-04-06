@@ -6,4 +6,4 @@
 ../Core/Src/UserInterface.c:97:13:lcd_send_string	16	static
 ../Core/Src/UserInterface.c:109:6:UI_Init	8	static
 ../Core/Src/UserInterface.c:142:6:UI_HandleButtonPress	16	static
-../Core/Src/UserInterface.c:161:6:UI_Update	72	static
+../Core/Src/UserInterface.c:178:6:UI_Update	72	static

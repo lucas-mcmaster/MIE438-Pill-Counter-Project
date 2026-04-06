@@ -6,6 +6,7 @@
  */
 
 #include "SystemConfig.h"
+#include "main.h"
 
 //intitializing the global var
 volatile SystemConfig_t SystemStatus;
@@ -16,7 +17,7 @@ void System_Init(void) {
     //setting default startup values
     SystemStatus.currentState = STATE_IDLE;
 
-    SystemStatus.targetPillCount = 0; //starting target and current pill count at 0
+    SystemStatus.targetPillCount = 1; //starting target at 1 and current pill count at 0
     SystemStatus.currentPillCount = 0;
 
     SystemStatus.filterDelayMs = 20;   //blind-time after a pill is detected to prevent double counting - CURRENTLY 20ms LOOK TO CHANGE AFTER TESTING
@@ -38,8 +39,16 @@ void System_ProcessState(void) {
             //The motor is spinning and the sensor interrupt is occurring for incrementing currentPillCount.
 
             //Checking if the machine has met the target - we can also do this in main if we want
-            if (SystemStatus.currentPillCount >= SystemStatus.targetPillCount) { //setting to greater or equal in case we overcount it doesnt lock into running state incorrectly
-                SystemStatus.currentState = STATE_COMPLETE;
+        	//Adding that target pill count > 0 for inventory mode
+            if (SystemStatus.targetPillCount>0 && SystemStatus.currentPillCount >= SystemStatus.targetPillCount) //setting to greater or equal in case we overcount it doesnt lock into running state incorrectly
+            {
+            	SystemStatus.currentState = STATE_COMPLETE;
+            }
+
+            //else if statement to force system to complete state if no pill drops for 10 seconds - for inventory mode so user doesn't have to stop themself
+            else if ((HAL_GetTick()-SystemStatus.lastPillTime) >= 10000)
+            {
+            	SystemStatus.currentState = STATE_COMPLETE;
             }
             break;
 
