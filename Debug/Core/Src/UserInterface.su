@@ -1,0 +1,9 @@
+../Core/Src/UserInterface.c:28:13:lcd_send_nibble	32	static
+../Core/Src/UserInterface.c:41:13:lcd_send_cmd	32	static
+../Core/Src/UserInterface.c:62:13:lcd_send_data	32	static
+../Core/Src/UserInterface.c:82:13:lcd_clear	8	static
+../Core/Src/UserInterface.c:88:13:lcd_set_cursor	16	static
+../Core/Src/UserInterface.c:97:13:lcd_send_string	16	static
+../Core/Src/UserInterface.c:109:6:UI_Init	8	static
+../Core/Src/UserInterface.c:142:6:UI_HandleButtonPress	16	static
+../Core/Src/UserInterface.c:178:6:UI_Update	72	static
