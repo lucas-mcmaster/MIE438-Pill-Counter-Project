@@ -268,14 +268,14 @@ void UI_Update(void) {
                 sprintf(buffer, "Pills: %u", snap_current);
                 break;
 
-            case STATE_ERROR: //error state - attempts to print out to LCD and flashed red led for info
+            case STATE_ERROR: //error state - attempts to print out to LCD and flashed yellow led for info
             	lcd_set_cursor(0, 0);
 				lcd_send_string("ERROR!          ");
 
 				lcd_set_cursor(1, 0);
 				lcd_send_string("Check Machine   ");
 
-				//Turning on the red LED to grab attention
+				//Turning on the yellow LED to grab attention
 				BSP_LED_On(LED_YELLOW);
 
 				break;

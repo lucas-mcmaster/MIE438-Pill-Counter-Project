@@ -13,7 +13,7 @@ static unsigned int last_step_time=0; //variable to store time of last step for 
 static unsigned int current_step=0;
 
 //not static so can be adjusted in other codes if needed
-unsigned int motor_speed_delay=10; //motor speed delay (motor step every 5 ms--can change)
+unsigned int motor_speed_delay=10; //motor speed delay (motor step every 10 ms--can change)
 
 //stepper sequence to rotate the stepper in the correct order
 static const uint8_t step_sequence[4][4] = {{1,0,1,0}, //step 0 (Pin1,Pin2,Pin3,Pin4)
