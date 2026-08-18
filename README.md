@@ -5,7 +5,6 @@
 ![IDE](https://img.shields.io/badge/Toolchain-STM32CubeIDE%20%7C%20HAL-03234B)
 ![Architecture](https://img.shields.io/badge/Architecture-Non--Blocking%20FSM-brightgreen)
 ![Accuracy](https://img.shields.io/badge/Counting%20Accuracy-100%25-success)
-![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
 > **MIE438 Microprocessors and Microcontrollers | University of Toronto**  
 > *Authors: Ahmed Fahmi, Anthony Sergnese, Joy Mehany, Lucas McMaster*  
@@ -13,7 +12,7 @@
 
 ---
 
-## 📌 Project Overview
+## Project Overview
 
 Manual prescription pill counting in independent pharmacies is slow, labour-intensive, and prone to human error. Commercial optical counters are often cost-prohibitive for small clinics. 
 
@@ -21,7 +20,7 @@ This project implements a low-cost, automated, embedded pill counting device usi
 
 ---
 
-## ⚙️ Mechanical & Hardware Architecture
+## Mechanical & Hardware Architecture
 
 ```text
                 +---------------------------------------+
@@ -57,7 +56,7 @@ This project implements a low-cost, automated, embedded pill counting device usi
 
 ---
 
-## 🧠 Firmware Architecture & Software Design
+## Firmware Architecture & Software Design
 
 The firmware is written in bare-metal C using the STM32 Hardware Abstraction Layer (HAL). It operates as a deterministic, **non-blocking superloop** governed by a 4-state **Finite State Machine (FSM)**:
 
@@ -98,7 +97,7 @@ The firmware is written in bare-metal C using the STM32 Hardware Abstraction Lay
 
 ---
 
-## 📂 Source Code Structure
+## Source Code Structure
 
 ```text
 MIE438-Pill-Counter-Project/
@@ -123,7 +122,7 @@ MIE438-Pill-Counter-Project/
 
 ---
 
-## 🧪 Validation & Test Results
+## Validation & Test Results
 
 - **Counting Accuracy**: Achieved **100% accuracy** across 30 independent verification trials (10 trials each at 25, 50, and 100 pill targets) under controlled singulation.
 - **Inventory Mode Timeout**: Successfully transitioned to `STATE_COMPLETE` within $10.0 \pm 0.2\text{ s}$ of hopper emptying across 5 validation trials.
@@ -133,7 +132,7 @@ MIE438-Pill-Counter-Project/
 
 ---
 
-## 🛠️ Build & Flashing Instructions
+## Build & Flashing Instructions
 
 1. Open **STM32CubeIDE** and import the project:
    `File` $\to$ `Open Projects from File System...` $\to$ Select repository folder.
