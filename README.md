@@ -7,7 +7,7 @@
 ![Accuracy](https://img.shields.io/badge/Counting%20Accuracy-100%25-success)
 
 > **MIE438 Microprocessors and Microcontrollers | University of Toronto**  
-> *Authors: Ahmed Fahmi, Anthony Sergnese, Joy Mehany, Lucas McMaster*  
+> *Authors: Lucas McMaster, Ahmed Fahmi, Anthony Sergnese, Joy Mehany*  
 > *Project Video Demonstration:* [YouTube Link](https://youtu.be/53f0EF_NOaQ)
 
 ---
