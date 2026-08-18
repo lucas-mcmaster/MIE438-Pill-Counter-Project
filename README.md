@@ -69,7 +69,7 @@ The firmware is written in bare-metal C using the STM32 Hardware Abstraction Lay
                                 v
                         +---------------+
               +-------->|  STATE_IDLE   |<--------+
-              |         +---------------+         |
+              |         +---------------+         ^
               |                 |                 |
               | (Target = 0)    | (Target > 0)    | (Reset Ack)
               v                 v                 |
@@ -77,8 +77,8 @@ The firmware is written in bare-metal C using the STM32 Hardware Abstraction Lay
       | STATE_RUNNING | | STATE_RUNNING |         |
       | (Inventory)   | | (Target Count)|         |
       +---------------+ +---------------+         |
-              \                 /                 |
-   (10s Timeout | Target Met)   |                 |
+               \                 /                |
+ (10s Timeout)  |               |  (Target Met)   |
                 v               v                 |
               +-------------------+               |
               |  STATE_COMPLETE   |---------------+
