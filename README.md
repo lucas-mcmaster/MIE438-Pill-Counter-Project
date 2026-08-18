@@ -128,7 +128,7 @@ MIE438-Pill-Counter-Project/
 - **Inventory Mode Timeout**: Successfully transitioned to `STATE_COMPLETE` within $10.0 \pm 0.2\text{ s}$ of hopper emptying across 5 validation trials.
 - **Debounce Optimization**:
   - Break-Beam Sensor: Increased from $20\text{ ms}$ to $75\text{ ms}$ to eliminate multiple triggers from pill surface facets.
-  - Encoder Button: Increased from $350\text{ ms}$ to $350\text{ ms}$ to eliminate contact chatter skips from `STATE_IDLE` to `STATE_COMPLETE`.
+  - Encoder Button: Increased from $50\text{ ms}$ to $350\text{ ms}$ to eliminate contact chatter skips from `STATE_IDLE` to `STATE_COMPLETE`.
 
 ---
 
